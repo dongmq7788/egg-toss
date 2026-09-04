@@ -23,16 +23,16 @@ export default function IntroScreen({ onStart, onSkipToMerit, bank = 0 }) {
             font: "400 36px var(--font-brush)", color: "var(--paper)",
             boxShadow: "var(--shadow-stamp)",
             transform: "rotate(-4deg)",
-          }}>扔</div>
+          }}>B</div>
           <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
             <div style={{
               font: "400 30px var(--font-display)", color: "var(--paper)",
               lineHeight: 1, whiteSpace: "nowrap",
-            }}>扔鸡蛋</div>
+            }}>Basta!</div>
             <div style={{
               font: "600 11px var(--font-body-en)", letterSpacing: ".18em",
               color: "var(--vent-yolk)", marginTop: 4,
-            }}>EGG · TOSS</div>
+            }}>LET · IT · OUT</div>
           </div>
         </div>
 

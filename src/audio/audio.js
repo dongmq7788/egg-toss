@@ -5,7 +5,9 @@
  */
 (function () {
   let ctx = null;
-  let muted = JSON.parse(localStorage.getItem("egg-toss-muted") || "false");
+  const MUTE_KEY = "basta-muted";
+  const LEGACY_MUTE_KEY = "egg-toss-muted";
+  let muted = JSON.parse(localStorage.getItem(MUTE_KEY) ?? localStorage.getItem(LEGACY_MUTE_KEY) ?? "false");
   let bgm = null;
 
   function ac() {
@@ -166,7 +168,7 @@
 
   function setMuted(m) {
     muted = !!m;
-    localStorage.setItem("egg-toss-muted", JSON.stringify(muted));
+    localStorage.setItem(MUTE_KEY, JSON.stringify(muted));
     if (muted && bgm) bgmPause();
     else if (!muted && bgm) bgmResume();
   }

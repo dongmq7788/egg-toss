@@ -8,10 +8,11 @@ import MeritScreen from "./screens/MeritScreen.jsx";
 // Merit accumulates across sessions in localStorage so "today's merit" can
 // be banked ahead of the next venting cycle.
 
-const BANK_KEY = "egg-toss-merit-bank";
+const BANK_KEY = "basta-merit-bank";
+const LEGACY_BANK_KEY = "egg-toss-merit-bank";
 
 function readBank() {
-  const raw = Number(localStorage.getItem(BANK_KEY));
+  const raw = Number(localStorage.getItem(BANK_KEY) ?? localStorage.getItem(LEGACY_BANK_KEY));
   return Number.isFinite(raw) && raw >= 0 ? raw : 0;
 }
 
