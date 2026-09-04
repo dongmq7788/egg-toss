@@ -3,8 +3,8 @@ export default function Segmented({ options, value, onChange }) {
     <div
       style={{
         display: "inline-flex",
-        background: "rgba(255,255,255,.06)",
-        border: "1.5px solid rgba(255,255,255,.18)",
+        background: "rgba(117,185,154,.10)",
+        border: "1.5px solid rgba(99,151,134,.25)",
         borderRadius: 999,
         padding: 3,
         alignSelf: "flex-start",
@@ -20,8 +20,8 @@ export default function Segmented({ options, value, onChange }) {
             borderRadius: 999,
             border: 0,
             cursor: "pointer",
-            background: value === o.value ? "var(--paper)" : "transparent",
-            color: value === o.value ? "var(--ink-100)" : "rgba(255,255,255,.75)",
+            background: value === o.value ? "#fff" : "transparent",
+            color: value === o.value ? "var(--ink-100)" : "var(--vent-copy-muted)",
             transition: "background .14s",
           }}
         >

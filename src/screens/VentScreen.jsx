@@ -6,6 +6,7 @@ import TextInput from "../components/TextInput.jsx";
 import Segmented from "../components/Segmented.jsx";
 import Button from "../components/Button.jsx";
 import StickFigure from "../components/StickFigure.jsx";
+import { useLanguage } from "../i18n.jsx";
 
 const HIT_WORDS = {
   egg:     ["啪!",  "中!",   "哼!"],
@@ -17,13 +18,19 @@ const HIT_EN = {
   cabbage: ["EW",    "ROTTEN",   "DESERVED"],
   slap:    ["SLAP",  "SMACK",    "WAKE UP"],
 };
+const DEFAULT_NAMES = { zh: "王老板", en: "Boss Wang" };
+const DEFAULT_CRIMES = {
+  zh: "周末突然要求加班\n画饼不兑现\nPUA 打工人",
+  en: "Demanded weekend overtime\nMade promises and never delivered\nKept guilt-tripping the team",
+};
 
 export default function VentScreen({ onComplete }) {
+  const { lang, t } = useLanguage();
   const [phase, setPhase] = useState("setup");
-  const [name, setName] = useState("王老板");
+  const [name, setName] = useState(() => DEFAULT_NAMES[lang]);
   const [gender, setGender] = useState("M");
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const [crimeText, setCrimeText] = useState("周末突然要求加班\n画饼不兑现\nPUA 打工人");
+  const [crimeText, setCrimeText] = useState(() => DEFAULT_CRIMES[lang]);
   const [weapon, setWeapon] = useState("egg");
 
   const [splats, setSplats] = useState([]);
@@ -36,6 +43,11 @@ export default function VentScreen({ onComplete }) {
   const stageRef = useRef(null);
   const idRef = useRef(0);
   const slapTickRef = useRef(0);
+
+  useEffect(() => {
+    setName((current) => Object.values(DEFAULT_NAMES).includes(current) ? DEFAULT_NAMES[lang] : current);
+    setCrimeText((current) => Object.values(DEFAULT_CRIMES).includes(current) ? DEFAULT_CRIMES[lang] : current);
+  }, [lang]);
 
   const crimes = crimeText.split("\n").map((s) => s.trim()).filter(Boolean);
 
@@ -119,16 +131,16 @@ export default function VentScreen({ onComplete }) {
         <div style={{
           position: "relative", zIndex: 1, height: "100%",
           display: "flex", flexDirection: "column",
-          padding: "56px 20px 24px", overflowY: "auto",
+          padding: "100px 20px 24px", overflowY: "auto",
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <Bilingual zh="登记倒霉鬼" en="register the target" />
-            <Stamp zh="发泄" rotate={-8} />
+            <Stamp zh={t("发泄", "VENT")} rotate={-8} />
           </div>
 
           <div style={{
-            background: "rgba(255,255,255,.04)",
-            border: "1.5px solid rgba(255,255,255,.12)",
+            background: "var(--vent-surface)",
+            border: "1.5px solid rgba(99,151,134,.2)",
             borderRadius: 20, padding: 18,
             display: "flex", flexDirection: "column", gap: 14,
           }}>
@@ -138,7 +150,7 @@ export default function VentScreen({ onComplete }) {
                 <input type="file" accept="image/*" onChange={pickAvatar} style={{ display: "none" }} />
                 <div style={{
                   width: 72, height: 72, borderRadius: "50%",
-                  background: avatarUrl ? `center/cover url(${avatarUrl})` : "rgba(242,183,46,.18)",
+                  background: avatarUrl ? `center/cover url(${avatarUrl})` : "rgba(231,184,79,.2)",
                   border: "2px dashed var(--vent-yolk)",
                   display: "grid", placeItems: "center",
                   color: "var(--vent-yolk)", font: "700 22px var(--font-display)",
@@ -146,38 +158,38 @@ export default function VentScreen({ onComplete }) {
                 }}>{avatarUrl ? "" : "+"}</div>
               </label>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <span style={{ font: "600 14px var(--font-body)", color: "var(--paper)" }}>头像 · upload photo</span>
-                <span style={{ font: "400 12px var(--font-body)", color: "rgba(255,255,255,.55)" }}>会自动只留头部 · head only</span>
+                <span style={{ font: "600 14px var(--font-body)", color: "var(--vent-copy)" }}>{t("头像", "Upload photo")}</span>
+                <span style={{ font: "400 12px var(--font-body)", color: "var(--vent-copy-muted)" }}>{t("会自动只留头部", "Only the face will be shown")}</span>
               </div>
             </div>
 
-            <Field label="姓名 · name">
+            <Field label={t("姓名", "Name")}>
               <TextInput value={name} onChange={setName} />
             </Field>
-            <Field label="性别 · gender">
+            <Field label={t("性别", "Gender")}>
               <Segmented
-                options={[{ value: "M", label: "男·M" }, { value: "F", label: "女·F" }]}
+                options={[{ value: "M", label: t("男", "Male") }, { value: "F", label: t("女", "Female") }]}
                 value={gender}
                 onChange={setGender}
               />
             </Field>
-            <Field label="罪行 · crimes (one per line)">
+            <Field label={t("罪行（每行一条）", "What they did (one per line)")}>
               <textarea
                 value={crimeText}
                 onChange={(e) => setCrimeText(e.target.value)}
-                placeholder="他犯了什么罪? 一行一条"
+                placeholder={t("他做了什么？一行一条", "What did they do? One item per line")}
                 style={{
-                  font: "400 15px/1.5 var(--font-body)", color: "var(--paper)",
-                  background: "rgba(255,255,255,.06)", border: "1.5px solid rgba(255,255,255,.18)",
+                  font: "400 15px/1.5 var(--font-body)", color: "var(--vent-copy)",
+                  background: "rgba(255,255,255,.78)", border: "1.5px solid rgba(99,151,134,.25)",
                   borderRadius: 12, padding: "10px 12px", outline: "none", width: "100%",
                   minHeight: 96, resize: "none",
                 }}
               />
               <span style={{
-                font: "500 11px var(--font-body-en)", color: "rgba(255,255,255,.5)",
+                font: "500 11px var(--font-body-en)", color: "var(--vent-copy-muted)",
                 marginTop: 2, letterSpacing: ".06em",
               }}>
-                {crimes.length} {crimes.length === 1 ? "crime" : "crimes"} · 会作为弹幕飘过
+                {t(`${crimes.length} 条，会作为弹幕飘过`, `${crimes.length} ${crimes.length === 1 ? "item" : "items"}; they will float across the screen`)}
               </span>
             </Field>
           </div>
@@ -189,7 +201,7 @@ export default function VentScreen({ onComplete }) {
             onClick={() => setPhase("battle")}
             style={{ width: "100%", height: 56, font: "700 18px var(--font-display)", marginTop: 16 }}
           >
-            开扔! · LET FLY
+            {t("开扔！", "LET FLY")}
           </Button>
         </div>
       </div>
@@ -203,25 +215,25 @@ export default function VentScreen({ onComplete }) {
       <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column" }}>
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "56px 20px 8px",
+          padding: "100px 20px 8px",
         }}>
           <button onClick={() => setPhase("setup")} style={{
-            background: "rgba(255,255,255,.08)", border: 0, color: "var(--paper)",
+            background: "rgba(255,255,255,.7)", border: 0, color: "var(--vent-copy)",
             padding: "8px 12px", borderRadius: 999, cursor: "pointer",
             font: "600 13px var(--font-body)",
-          }}>← 返回</button>
+          }}>← {t("返回", "Back")}</button>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1 }}>
             <div className="t-num" style={{ color: "var(--vent-yolk)", fontSize: 22 }}>+{hits}</div>
             <div style={{
               font: "500 10px var(--font-body-en)", letterSpacing: ".1em",
               color: "var(--ink-40)", textTransform: "uppercase",
-            }}>HITS</div>
+            }}>{t("命中", "HITS")}</div>
           </div>
           <Button
             variant="merit"
             onClick={() => onComplete && onComplete(hits)}
             style={{ height: 36, padding: "0 14px", font: "700 13px var(--font-body)" }}
-          >完成 →</Button>
+          >{t("完成 →", "Done →")}</Button>
         </div>
 
         {/* Stage with stick figure + danmaku layer */}
@@ -237,7 +249,7 @@ export default function VentScreen({ onComplete }) {
                 font: "700 18px var(--font-display)", color: "var(--vent-yolk)",
                 textShadow: "2px 2px 0 var(--vent-vermilion-2), 0 2px 6px rgba(0,0,0,.5)",
                 animation: "danmaku 4s linear forwards",
-                background: "rgba(26,22,18,.5)", padding: "4px 12px", borderRadius: 6,
+                background: "rgba(255,255,255,.78)", padding: "4px 12px", borderRadius: 6,
                 border: "1.5px solid var(--vent-vermilion)",
               }}>{d.text}</div>
             ))}
@@ -259,11 +271,7 @@ export default function VentScreen({ onComplete }) {
               textShadow: "4px 4px 0 var(--vent-vermilion-2)", letterSpacing: ".04em",
               pointerEvents: "none", animation: "hitPop 600ms var(--ease-snap) both",
             }}>
-              {feedback.zh}
-              <div style={{
-                font: "600 14px var(--font-body-en)", letterSpacing: ".15em",
-                color: "var(--paper)", marginTop: 4, textAlign: "center",
-              }}>{feedback.en}</div>
+              {lang === "zh" ? feedback.zh : feedback.en}
             </div>
           )}
         </div>
@@ -278,7 +286,7 @@ export default function VentScreen({ onComplete }) {
             onClick={attack}
             style={{
               width: 96, height: 96, borderRadius: 999, border: 0, cursor: "pointer",
-              background: "var(--vent-vermilion)", color: "var(--paper)",
+              background: "var(--vent-vermilion)", color: "#fff",
               font: "700 18px var(--font-display)",
               boxShadow: "0 6px 0 var(--vent-vermilion-2), 0 12px 28px rgba(0,0,0,.5)",
               transition: "transform .08s var(--ease-snap)", flexShrink: 0,
@@ -287,19 +295,17 @@ export default function VentScreen({ onComplete }) {
             onMouseUp={(e) => (e.currentTarget.style.transform = "")}
             onMouseLeave={(e) => (e.currentTarget.style.transform = "")}
           >
-            {weapon === "slap" ? "扇!" : "扔!"}
+            {weapon === "slap" ? t("扇！", "SLAP!") : t("扔！", "THROW!")}
           </button>
           <button
             onClick={() => { setSplats([]); setHits(0); }}
             style={{
-              background: "transparent", border: "1.5px solid rgba(255,255,255,.2)",
-              color: "var(--paper)", padding: "10px 12px", borderRadius: 12, cursor: "pointer",
+              background: "rgba(255,255,255,.7)", border: "1.5px solid rgba(99,151,134,.24)",
+              color: "var(--vent-copy)", padding: "10px 12px", borderRadius: 12, cursor: "pointer",
               font: "600 12px var(--font-body)", lineHeight: 1.2,
             }}
           >
-            清空
-            <br />
-            <span style={{ font: "500 9px var(--font-body-en)", letterSpacing: ".1em", opacity: .7 }}>RESET</span>
+            {t("清空", "RESET")}
           </button>
         </div>
       </div>
@@ -308,6 +314,7 @@ export default function VentScreen({ onComplete }) {
 }
 
 function WeaponPicker({ value, onChange }) {
+  const { t } = useLanguage();
   const opts = [
     { v: "egg",     zh: "鸡蛋", en: "EGG",    emoji: "🥚", color: "var(--vent-yolk)" },
     { v: "cabbage", zh: "烂菜", en: "ROTTEN", emoji: "🥬", color: "var(--vent-cabbage)" },
@@ -323,7 +330,7 @@ function WeaponPicker({ value, onChange }) {
             onClick={() => onChange(o.v)}
             style={{
               width: 60, height: 68, borderRadius: 14, border: 0, cursor: "pointer",
-              background: active ? "rgba(255,255,255,.14)" : "rgba(255,255,255,.04)",
+              background: active ? "rgba(255,255,255,.92)" : "rgba(255,255,255,.52)",
               outline: active ? `2px solid ${o.color}` : "none",
               display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
               gap: 4, padding: 4,
@@ -333,7 +340,7 @@ function WeaponPicker({ value, onChange }) {
             <span style={{
               font: "600 10px var(--font-body)", color: o.color,
               lineHeight: 1, whiteSpace: "nowrap",
-            }}>{o.zh}</span>
+            }}>{t(o.zh, o.en)}</span>
           </button>
         );
       })}

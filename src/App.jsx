@@ -3,6 +3,7 @@ import IOSDevice from "./components/IOSDevice.jsx";
 import IntroScreen from "./screens/IntroScreen.jsx";
 import VentScreen from "./screens/VentScreen.jsx";
 import MeritScreen from "./screens/MeritScreen.jsx";
+import { LanguageToggle } from "./i18n.jsx";
 
 // App — Intro -> (Vent or skip) -> Merit, with ink-wipe transitions.
 // Merit accumulates across sessions in localStorage so "today's merit" can
@@ -44,7 +45,7 @@ export default function App() {
     goto("intro", 0);
   }
 
-  const dark = screen === "vent" || screen === "intro";
+  const dark = false;
   const bg =
     screen === "intro" ? "var(--vent-ink)" :
     screen === "vent"  ? "var(--vent-ink)" :
@@ -53,6 +54,7 @@ export default function App() {
   return (
     <IOSDevice width={390} height={844} dark={dark}>
       <div style={{ position: "relative", height: "100%", overflow: "hidden", background: bg }}>
+        <LanguageToggle />
         {screen === "intro" && (
           <IntroScreen
             bank={bank}

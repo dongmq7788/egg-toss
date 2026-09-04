@@ -1,7 +1,7 @@
 export default function TextInput({ value, onChange, placeholder, dark = true }) {
   const styleDark = {
-    font: "400 16px var(--font-body)", color: "var(--paper)",
-    background: "rgba(255,255,255,.06)", border: "1.5px solid rgba(255,255,255,.18)",
+    font: "400 16px var(--font-body)", color: "var(--vent-copy)",
+    background: "rgba(255,255,255,.78)", border: "1.5px solid rgba(99,151,134,.25)",
     borderRadius: 12, padding: "12px 14px", outline: "none", width: "100%",
   };
   const styleLight = {

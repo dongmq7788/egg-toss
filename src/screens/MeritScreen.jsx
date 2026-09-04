@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import Bilingual from "../components/Bilingual.jsx";
 import Button from "../components/Button.jsx";
+import { useLanguage } from "../i18n.jsx";
 
 // ─── Static content ──────────────────────────────────────────
 const RELIGIONS = [
-  { id: "buddhist",  zh: "佛教",       en: "Buddhist",  emoji: "🪷",  color: "var(--merit-wood)", bg: "var(--merit-rice)" },
-  { id: "christian", zh: "基督 / 天主", en: "Christian", emoji: "✝︎",  color: "#5C7A8A",           bg: "#EEF1F0" },
-  { id: "muslim",    zh: "伊斯兰",      en: "Muslim",    emoji: "☪︎",  color: "#3A6B4E",           bg: "#F0EBDC" },
+  { id: "buddhist",  zh: "佛教", en: "Buddhist", emoji: "🪷", color: "var(--merit-wood)", bg: "#FFF8E9", zhDesc: "敲木鱼，听心经与金刚经", enDesc: "Tap the wooden fish and listen to a sutra" },
+  { id: "christian", zh: "基督 / 天主", en: "Christian", emoji: "✝︎", color: "#6F98A8", bg: "#F2FAFC", zhDesc: "进忏悔室，把心里的话说出来", enDesc: "Step into confession and say what's on your mind" },
+  { id: "muslim", zh: "伊斯兰", en: "Muslim", emoji: "☪︎", color: "#559071", bg: "#F2FAF5", zhDesc: "静下心来，向真主祈祷", enDesc: "Slow down and offer a quiet prayer" },
 ];
 
 const SUTRAS = [
-  { id: "heart",   zh: "心經",  en: "Heart Sutra",       excerpt: "色不异空，空不异色。" },
-  { id: "diamond", zh: "金剛經", en: "Diamond Sutra",     excerpt: "凡所有相，皆是虚妄。" },
-  { id: "great",   zh: "大悲咒", en: "Great Compassion",  excerpt: "南无喝啰怛那哆啰夜耶。" },
+  { id: "heart", zh: "心经", en: "Heart Sutra", zhExcerpt: "色不异空，空不异色。", enExcerpt: "Form is emptiness; emptiness is form." },
+  { id: "diamond", zh: "金刚经", en: "Diamond Sutra", zhExcerpt: "凡所有相，皆是虚妄。", enExcerpt: "All appearances are fleeting and unreal." },
+  { id: "great", zh: "大悲咒", en: "Great Compassion Mantra", zhExcerpt: "南无喝啰怛那哆啰夜耶。", enExcerpt: "A mantra of great compassion." },
 ];
 
 const CONFESSIONS_EN = [
@@ -61,28 +62,23 @@ export default function MeritScreen({ sinsToOffset = 0, startingMerit = 0, onDon
 
 // ─── Religion picker ──────────────────────────────────────────
 function ReligionPicker({ onPick, sinsToOffset, onDone }) {
+  const { t } = useLanguage();
   return (
     <div className="screen" data-mode="merit">
       <div className="grain-layer" />
       <div style={{
         position: "relative", zIndex: 1, height: "100%",
-        display: "flex", flexDirection: "column", padding: "56px 20px 24px",
+        display: "flex", flexDirection: "column", padding: "100px 20px 24px",
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Bilingual zh="选择你的功德" en="choose your path" style={{ color: "var(--merit-wood-2)" }} />
           <button onClick={onDone} style={{
             background: "transparent", border: 0, color: "var(--merit-wood-2)",
             font: "600 13px var(--font-body)", cursor: "pointer",
-          }}>跳过 →</button>
+          }}>{t("跳过 →", "Skip →")}</button>
         </div>
         <p style={{ font: "400 14px/1.5 var(--font-body)", color: "var(--ink-80)", marginTop: 10, marginBottom: 6 }}>
-          按你信的来。点几下，把刚才的火气消一消。
-        </p>
-        <p style={{
-          font: "400 12px/1.4 var(--font-body-en)", color: "var(--ink-60)",
-          fontStyle: "italic", marginBottom: 16,
-        }}>
-          Pick what you believe in (or don't). Tap to redeem.
+          {t("按你信的来。点几下，把刚才的火气消一消。", "Choose what you believe in—or simply what helps. Tap your way back to calm.")}
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14, flex: 1 }}>
@@ -105,15 +101,9 @@ function ReligionPicker({ onPick, sinsToOffset, onDone }) {
                 display: "grid", placeItems: "center", fontSize: 30, flexShrink: 0,
               }}>{r.emoji}</div>
               <div style={{ flex: 1 }}>
-                <div style={{ font: "700 22px var(--font-display)", color: r.color, lineHeight: 1 }}>{r.zh}</div>
-                <div style={{
-                  font: "500 11px var(--font-body-en)", letterSpacing: ".12em",
-                  textTransform: "uppercase", color: "var(--ink-60)", marginTop: 4,
-                }}>{r.en}</div>
+                <div style={{ font: "700 22px var(--font-display)", color: r.color, lineHeight: 1 }}>{t(r.zh, r.en)}</div>
                 <div style={{ font: "400 12px var(--font-body)", color: "var(--ink-80)", marginTop: 6 }}>
-                  {r.id === "buddhist"  && "敲木鱼，听心经金刚经"}
-                  {r.id === "christian" && "进忏悔室，对着神父说出来"}
-                  {r.id === "muslim"    && "戴小帽，向真主念几句"}
+                  {t(r.zhDesc, r.enDesc)}
                 </div>
               </div>
               <span style={{ color: r.color, font: "700 24px var(--font-body)" }}>›</span>
@@ -127,7 +117,7 @@ function ReligionPicker({ onPick, sinsToOffset, onDone }) {
             borderRadius: 12, textAlign: "center",
           }}>
             <span style={{ font: "500 13px var(--font-body)", color: "var(--ink-80)" }}>
-              本场积下 <b style={{ color: "var(--vent-vermilion)" }}>{sinsToOffset}</b> 项罪行 · 等待抵消
+              {t(`本场积下 ${sinsToOffset} 项罪行，等待抵消`, `${sinsToOffset} ${sinsToOffset === 1 ? "item" : "items"} waiting to be offset`)}
             </span>
           </div>
         )}
@@ -138,6 +128,7 @@ function ReligionPicker({ onPick, sinsToOffset, onDone }) {
 
 // ─── Buddhist mode (wooden fish) ──────────────────────────────
 function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone }) {
+  const { t } = useLanguage();
   const [sutra, setSutra] = useState(SUTRAS[0]);
   const [picking, setPicking] = useState(false);
   const [ripples, setRipples] = useState([]);
@@ -172,7 +163,7 @@ function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDo
         background: "radial-gradient(60% 50% at 50% 45%, rgba(200,162,75,.18), transparent 70%)",
       }} />
       <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column" }}>
-        <ModeHeader onBack={onBack} title="佛教 · 木鱼" merit={merit} onDone={onDone} accent="var(--merit-wood-2)" />
+        <ModeHeader onBack={onBack} title={t("佛教 · 木鱼", "Buddhist · Wooden Fish")} merit={merit} onDone={onDone} accent="var(--merit-wood-2)" />
         {sinsToOffset > 0 && <OffsetBar offset={offsetCount} total={sinsToOffset} />}
 
         {/* Sutra strip */}
@@ -193,18 +184,14 @@ function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDo
             }}>♪</div>
             <div style={{ flex: 1 }}>
               <div style={{ font: "400 18px var(--font-brush)", color: "var(--merit-wood-2)", lineHeight: 1 }}>
-                《{sutra.zh}》
+                {t(`《${sutra.zh}》`, sutra.en)}
               </div>
-              <div style={{
-                font: "500 10px var(--font-body-en)", letterSpacing: ".12em",
-                color: "var(--ink-60)", textTransform: "uppercase", marginTop: 4,
-              }}>{sutra.en}</div>
             </div>
-            <span style={{ font: "600 12px var(--font-body)", color: "var(--merit-wood-2)" }}>换一卷 ›</span>
+            <span style={{ font: "600 12px var(--font-body)", color: "var(--merit-wood-2)" }}>{t("换一卷 ›", "Change ›")}</span>
           </button>
           <p className="t-sutra" style={{
             color: "var(--ink-80)", fontSize: 13, opacity: .85, marginTop: 8, textAlign: "center",
-          }}>{sutra.excerpt}</p>
+          }}>{t(sutra.zhExcerpt, sutra.enExcerpt)}</p>
         </div>
 
         <div style={{
@@ -222,11 +209,11 @@ function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDo
         </div>
 
         <div style={{ textAlign: "center", padding: "0 20px 8px" }}>
-          <div style={{ font: "500 13px var(--font-body)", color: "var(--ink-60)" }}>敲一下 · tap to gain merit</div>
+          <div style={{ font: "500 13px var(--font-body)", color: "var(--ink-60)" }}>{t("敲一下，积一份功德", "Tap to gain merit")}</div>
         </div>
         <div style={{ padding: "12px 20px 24px" }}>
           <Button variant="merit" onClick={onDone} style={{ width: "100%", height: 48, borderRadius: 12 }}>
-            完成 · DONE
+            {t("完成", "DONE")}
           </Button>
         </div>
       </div>
@@ -268,6 +255,7 @@ function WoodenFishArt() {
 }
 
 function SutraPickerSheet({ value, onPick, onClose }) {
+  const { t } = useLanguage();
   return (
     <>
       <div
@@ -305,13 +293,9 @@ function SutraPickerSheet({ value, onPick, onClose }) {
                 background: active ? "var(--merit-gold)" : "var(--merit-wood)",
                 color: "var(--paper)", display: "grid", placeItems: "center",
                 font: "400 22px var(--font-brush)",
-              }}>{s.zh.slice(0, 1)}</div>
+              }}>{t(s.zh, s.en).slice(0, 1)}</div>
               <div style={{ flex: 1 }}>
-                <div style={{ font: "400 20px var(--font-brush)", color: "var(--ink-100)" }}>《{s.zh}》</div>
-                <div style={{
-                  font: "500 11px var(--font-body-en)", letterSpacing: ".12em",
-                  textTransform: "uppercase", color: "var(--ink-60)", marginTop: 4,
-                }}>{s.en}</div>
+                <div style={{ font: "400 20px var(--font-brush)", color: "var(--ink-100)" }}>{t(`《${s.zh}》`, s.en)}</div>
               </div>
               {active && (
                 <div style={{ color: "var(--merit-gold-2)", font: "700 18px var(--font-body)" }}>✓</div>
@@ -326,15 +310,17 @@ function SutraPickerSheet({ value, onPick, onClose }) {
 
 // ─── Christian mode (confession) ──────────────────────────────
 function ChristianMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone }) {
+  const { lang, t } = useLanguage();
   const [bubble, setBubble] = useState(null);
   const [priestNods, setPriestNods] = useState(0);
-  const [lang, setLang] = useState("zh");
   const idRef = useRef(0);
 
   useEffect(() => {
     window.GameAudio && window.GameAudio.startBGM("christian");
     return () => window.GameAudio && window.GameAudio.stopBGM();
   }, []);
+
+  useEffect(() => setBubble(null), [lang]);
 
   function confess() {
     const id = ++idRef.current;
@@ -351,30 +337,8 @@ function ChristianMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onD
     <div className="screen" style={{ background: "#EEF1F0", color: "#1A1612" }}>
       <div className="grain-layer" style={{ opacity: .04 }} />
       <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column" }}>
-        <ModeHeader onBack={onBack} title="忏悔室 · Confession" merit={merit} onDone={onDone} accent="#5C7A8A" />
+        <ModeHeader onBack={onBack} title={t("忏悔室", "Confession")} merit={merit} onDone={onDone} accent="#5C7A8A" />
         {sinsToOffset > 0 && <OffsetBar offset={offsetCount} total={sinsToOffset} />}
-
-        {/* lang toggle */}
-        <div style={{ padding: "0 20px", display: "flex", justifyContent: "center", gap: 6 }}>
-          <div style={{
-            display: "inline-flex", background: "#fff",
-            border: "1.5px solid #5C7A8A", borderRadius: 999, padding: 3,
-          }}>
-            {[{ v: "zh", l: "中文" }, { v: "en", l: "EN" }].map((o) => (
-              <button
-                key={o.v}
-                onClick={() => setLang(o.v)}
-                style={{
-                  font: "600 12px/1 var(--font-body)", padding: "8px 14px",
-                  borderRadius: 999, border: 0, cursor: "pointer",
-                  background: lang === o.v ? "#5C7A8A" : "transparent",
-                  color: lang === o.v ? "#fff" : "#5C7A8A",
-                  whiteSpace: "nowrap",
-                }}
-              >{o.l}</button>
-            ))}
-          </div>
-        </div>
 
         <div style={{
           flex: 1, position: "relative",
@@ -384,7 +348,7 @@ function ChristianMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onD
         </div>
 
         <div style={{ padding: "0 20px 8px", textAlign: "center" }}>
-          <div style={{ font: "500 13px var(--font-body)", color: "#3D372F" }}>说点啥都行 · tap to confess</div>
+          <div style={{ font: "500 13px var(--font-body)", color: "#3D372F" }}>{t("想说什么都可以", "Say whatever is on your mind")}</div>
         </div>
         <div style={{ padding: "12px 20px 24px", display: "flex", gap: 10 }}>
           <button
@@ -394,7 +358,7 @@ function ChristianMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onD
               background: "#5C7A8A", color: "#fff", font: "700 16px var(--font-body)",
               boxShadow: "0 4px 0 #3F5A6A",
             }}
-          >父啊，我有罪 · Bless me father</button>
+          >{t("父啊，我有罪", "Bless me, Father")}</button>
           <button
             onClick={onDone}
             style={{
@@ -402,7 +366,7 @@ function ChristianMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onD
               border: "1.5px solid #5C7A8A", background: "transparent",
               color: "#5C7A8A", font: "600 13px var(--font-body)", cursor: "pointer",
             }}
-          >完成</button>
+          >{t("完成", "Done")}</button>
         </div>
       </div>
     </div>
@@ -506,6 +470,7 @@ function ConfessionBooth({ bubble, priestNods }) {
 
 // ─── Muslim mode (prayer) ─────────────────────────────────────
 function MuslimMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone }) {
+  const { lang, t } = useLanguage();
   const [bubble, setBubble] = useState(null);
   const [bow, setBow] = useState(0);
   const idRef = useRef(0);
@@ -529,7 +494,7 @@ function MuslimMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone
     <div className="screen" style={{ background: "#F0EBDC", color: "#1A1612" }}>
       <div className="grain-layer" style={{ opacity: .05 }} />
       <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column" }}>
-        <ModeHeader onBack={onBack} title="向真主忏悔 · Astaghfirullah" merit={merit} onDone={onDone} accent="#3A6B4E" />
+        <ModeHeader onBack={onBack} title={t("向真主忏悔", "Astaghfirullah")} merit={merit} onDone={onDone} accent="#3A6B4E" />
         {sinsToOffset > 0 && <OffsetBar offset={offsetCount} total={sinsToOffset} />}
 
         <div style={{
@@ -538,11 +503,11 @@ function MuslimMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone
           paddingBottom: 20,
         }}>
           <MosqueArch />
-          <PrayingFigure bow={bow} bubble={bubble} />
+          <PrayingFigure bow={bow} bubble={bubble} lang={lang} />
         </div>
 
         <div style={{ padding: "0 20px 8px", textAlign: "center" }}>
-          <div style={{ font: "500 13px var(--font-body)", color: "#3D372F" }}>戴上小帽，跟着念 · tap to recite</div>
+          <div style={{ font: "500 13px var(--font-body)", color: "#3D372F" }}>{t("静下心来，跟着念", "Slow down and recite")}</div>
         </div>
         <div style={{ padding: "12px 20px 24px", display: "flex", gap: 10 }}>
           <button
@@ -552,7 +517,7 @@ function MuslimMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone
               background: "#3A6B4E", color: "#F0EBDC", font: "700 16px var(--font-body)",
               boxShadow: "0 4px 0 #244A33",
             }}
-          >主啊，请原谅 · Forgive me</button>
+          >{t("主啊，请原谅", "Forgive me")}</button>
           <button
             onClick={onDone}
             style={{
@@ -560,7 +525,7 @@ function MuslimMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone
               border: "1.5px solid #3A6B4E", background: "transparent",
               color: "#3A6B4E", font: "600 13px var(--font-body)", cursor: "pointer",
             }}
-          >完成</button>
+          >{t("完成", "Done")}</button>
         </div>
       </div>
     </div>
@@ -586,7 +551,7 @@ function MosqueArch() {
   );
 }
 
-function PrayingFigure({ bow, bubble }) {
+function PrayingFigure({ bow, bubble, lang }) {
   return (
     <div style={{
       position: "relative", display: "flex", flexDirection: "column",
@@ -599,11 +564,7 @@ function PrayingFigure({ bow, bubble }) {
           animation: "bubbleIn .22s var(--ease-snap)", maxWidth: 240, textAlign: "center",
           boxShadow: "0 4px 0 #244A33",
         }}>
-          {bubble.zh}
-          <div style={{
-            font: "500 11px var(--font-body-en)", color: "#3A6B4E",
-            marginTop: 2, fontStyle: "italic",
-          }}>{bubble.en}</div>
+          {lang === "zh" ? bubble.zh : bubble.en}
         </div>
       )}
       <div
@@ -667,6 +628,7 @@ function PrayingFigure({ bow, bubble }) {
 
 // ─── Shared mode chrome ───────────────────────────────────────
 function ModeHeader({ onBack, title, merit, onDone, accent }) {
+  const { t } = useLanguage();
   const [muted, setMuted] = useState(window.GameAudio ? window.GameAudio.isMuted() : false);
   function toggleMute() {
     const m = !muted;
@@ -675,13 +637,13 @@ function ModeHeader({ onBack, title, merit, onDone, accent }) {
   }
   return (
     <div style={{
-      padding: "56px 20px 8px",
+      padding: "100px 20px 8px",
       display: "flex", justifyContent: "space-between", alignItems: "center",
     }}>
       <button onClick={onBack} style={{
         background: "transparent", border: 0, color: accent,
         font: "600 13px var(--font-body)", cursor: "pointer",
-      }}>← 换一个</button>
+      }}>← {t("换一个", "Change")}</button>
       <div style={{ textAlign: "center", lineHeight: 1.1 }}>
         <div style={{ font: "700 15px var(--font-body)", color: accent }}>{title}</div>
         <div className="t-num" style={{ color: accent, fontSize: 22, marginTop: 2 }}>
@@ -689,13 +651,13 @@ function ModeHeader({ onBack, title, merit, onDone, accent }) {
           <span style={{
             font: "500 10px var(--font-body-en)", letterSpacing: ".12em",
             textTransform: "uppercase", opacity: .8,
-          }}>merit</span>
+          }}>{t("功德", "merit")}</span>
         </div>
       </div>
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <button
           onClick={toggleMute}
-          title="mute"
+          title={t("静音", "Mute")}
           style={{
             background: "transparent", border: 0, color: accent,
             font: "600 16px var(--font-body)", cursor: "pointer", width: 32,
@@ -704,17 +666,18 @@ function ModeHeader({ onBack, title, merit, onDone, accent }) {
         <button onClick={onDone} style={{
           background: "transparent", border: 0, color: accent,
           font: "600 13px var(--font-body)", cursor: "pointer",
-        }}>完成 →</button>
+        }}>{t("完成 →", "Done →")}</button>
       </div>
     </div>
   );
 }
 
 function OffsetBar({ offset, total }) {
+  const { t } = useLanguage();
   return (
     <div style={{ padding: "0 20px", marginTop: 4 }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-        <span style={{ font: "500 12px var(--font-body)", color: "var(--ink-80)" }}>抵消罪行 · offsetting sins</span>
+        <span style={{ font: "500 12px var(--font-body)", color: "var(--ink-80)" }}>{t("正在抵消罪行", "Offsetting items")}</span>
         <span style={{ font: "600 12px var(--font-num)", color: "var(--merit-wood-2)" }}>{offset} / {total}</span>
       </div>
       <div style={{

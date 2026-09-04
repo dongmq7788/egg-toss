@@ -8,36 +8,39 @@
 
 :root {
   /* ─── Vent palette (chaos / sin) ─────────────────────────── */
-  --vent-vermilion:   #C8362A;   /* 朱红, primary anger */
-  --vent-vermilion-2: #9A2519;   /* deeper, for press / shadow */
-  --vent-yolk:        #F2B72E;   /* 蛋黄 */
-  --vent-yolk-2:      #C28D14;
-  --vent-cabbage:     #6B8F3C;   /* 菜绿 */
-  --vent-cabbage-2:   #4A6B22;
-  --vent-ink:         #1A1612;   /* near-black, slightly warm */
-  --vent-ink-2:       #2B2620;
+  --vent-vermilion:   #EE7D73;
+  --vent-vermilion-2: #D85D56;
+  --vent-yolk:        #E7B84F;
+  --vent-yolk-2:      #C99834;
+  --vent-cabbage:     #75B99A;
+  --vent-cabbage-2:   #4E8E73;
+  --vent-ink:         #EDF9F6;
+  --vent-ink-2:       #DCEFE9;
+  --vent-copy:        #29443D;
+  --vent-copy-muted:  #617E76;
+  --vent-surface:     rgba(255,255,255,.72);
 
   /* ─── Merit palette (zen / redemption) ────────────────────── */
-  --merit-jade:       #7BA889;   /* 玉, yellow-green */
-  --merit-jade-2:     #5C8A6B;
-  --merit-wood:       #8B5E3C;   /* 木 */
-  --merit-wood-2:     #6B4528;
-  --merit-rice:       #F4ECD8;   /* 米白, paper */
-  --merit-rice-2:     #E8DDC0;
-  --merit-gold:       #C8A24B;   /* 金 */
-  --merit-gold-2:     #9C7A2E;
+  --merit-jade:       #8CC8AE;
+  --merit-jade-2:     #5D9E82;
+  --merit-wood:       #7C9F93;
+  --merit-wood-2:     #55786D;
+  --merit-rice:       #FFF9EF;
+  --merit-rice-2:     #F4EBD8;
+  --merit-gold:       #E4BC65;
+  --merit-gold-2:     #B98A33;
 
   /* ─── Shared neutral spine ───────────────────────────────── */
-  --ink-100: #1A1612;            /* primary text */
-  --ink-80:  #3D372F;            /* secondary text */
-  --ink-60:  #6B6358;            /* tertiary, captions */
+  --ink-100: #29443D;
+  --ink-80:  #47635B;
+  --ink-60:  #6F8982;
   --ink-40:  #9C9286;            /* disabled / hint */
   --ink-20:  #D4CCBE;            /* subtle border */
   --ink-10:  #E8E1D2;            /* divider */
   --paper:   #F7F1E2;            /* 宣纸, primary surface */
   --paper-2: #FBF7EC;            /* elevated surface */
   --paper-3: #FDFBF4;            /* highest surface */
-  --seal-red:#A8281C;            /* 朱印, reserved for logo + final CTA only */
+  --seal-red:#EE7D73;
 
   /* ─── Semantic colors (mode-agnostic) ────────────────────── */
   --fg-1: var(--ink-100);

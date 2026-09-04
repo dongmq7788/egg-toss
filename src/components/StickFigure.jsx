@@ -36,14 +36,14 @@ const StickFigure = forwardRef(function StickFigure(
       }}>
         <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} style={{ position: "absolute", inset: 0, zIndex: 1 }}>
           <ellipse cx={W / 2} cy={H - 6} rx="60" ry="6" fill="rgba(0,0,0,.45)" />
-          <line x1={W / 2} y1="120" x2={W / 2} y2="148" stroke="var(--paper)" strokeWidth="3" strokeLinecap="round" />
-          <line x1={W / 2} y1="148" x2={W / 2} y2="232" stroke="var(--paper)" strokeWidth="4" strokeLinecap="round" />
+          <line x1={W / 2} y1="120" x2={W / 2} y2="148" stroke="var(--vent-copy)" strokeWidth="3" strokeLinecap="round" />
+          <line x1={W / 2} y1="148" x2={W / 2} y2="232" stroke="var(--vent-copy)" strokeWidth="4" strokeLinecap="round" />
           {/* left arm */}
           <line
             x1={W / 2} y1="160"
             x2={slapSide === "L" ? W / 2 - 78 : 50}
             y2={slapSide === "L" ? 92 : 200}
-            stroke="var(--paper)" strokeWidth="3" strokeLinecap="round"
+            stroke="var(--vent-copy)" strokeWidth="3" strokeLinecap="round"
             style={{ transition: "all .18s var(--ease-snap)" }}
           />
           {/* right arm */}
@@ -51,12 +51,12 @@ const StickFigure = forwardRef(function StickFigure(
             x1={W / 2} y1="160"
             x2={slapSide === "R" ? W / 2 + 78 : W - 50}
             y2={slapSide === "R" ? 92 : 200}
-            stroke="var(--paper)" strokeWidth="3" strokeLinecap="round"
+            stroke="var(--vent-copy)" strokeWidth="3" strokeLinecap="round"
             style={{ transition: "all .18s var(--ease-snap)" }}
           />
           {/* legs */}
-          <line x1={W / 2} y1="232" x2={W / 2 - 30} y2={H - 14} stroke="var(--paper)" strokeWidth="4" strokeLinecap="round" />
-          <line x1={W / 2} y1="232" x2={W / 2 + 30} y2={H - 14} stroke="var(--paper)" strokeWidth="4" strokeLinecap="round" />
+          <line x1={W / 2} y1="232" x2={W / 2 - 30} y2={H - 14} stroke="var(--vent-copy)" strokeWidth="4" strokeLinecap="round" />
+          <line x1={W / 2} y1="232" x2={W / 2 + 30} y2={H - 14} stroke="var(--vent-copy)" strokeWidth="4" strokeLinecap="round" />
           {/* tie — reads as office worker */}
           <polygon
             points={`${W / 2 - 7},152 ${W / 2 + 7},152 ${W / 2 + 5},170 ${W / 2},182 ${W / 2 - 5},170`}
@@ -70,7 +70,7 @@ const StickFigure = forwardRef(function StickFigure(
           width: 96, height: 96, borderRadius: "50%",
           overflow: "hidden",
           background: avatarUrl ? "transparent" : "linear-gradient(135deg, #C8A24B, #8B5E3C)",
-          border: "3px solid var(--paper)",
+          border: "3px solid #fff",
           boxShadow: "0 4px 12px rgba(0,0,0,.5)",
           zIndex: 2,
           ...(slapSide ? { animation: `slapShake${slapSide} .3s` } : {}),
@@ -89,7 +89,7 @@ const StickFigure = forwardRef(function StickFigure(
           ) : (
             <div style={{
               width: "100%", height: "100%", display: "grid", placeItems: "center",
-              color: "var(--vent-ink)", font: "700 40px var(--font-display)",
+              color: "var(--vent-copy)", font: "700 40px var(--font-display)",
             }}>{(name || "?").slice(0, 1)}</div>
           )}
         </div>
