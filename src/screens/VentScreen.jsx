@@ -131,7 +131,7 @@ export default function VentScreen({ onComplete }) {
         <div style={{
           position: "relative", zIndex: 1, height: "100%",
           display: "flex", flexDirection: "column",
-          padding: "100px 20px 24px", overflowY: "auto",
+          padding: "76px 20px max(24px, env(safe-area-inset-bottom))", overflowY: "auto",
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <Bilingual zh="登记倒霉鬼" en="register the target" />
@@ -215,7 +215,7 @@ export default function VentScreen({ onComplete }) {
       <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column" }}>
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "100px 20px 8px",
+          padding: "76px 20px 8px",
         }}>
           <button onClick={() => setPhase("setup")} style={{
             background: "rgba(255,255,255,.7)", border: 0, color: "var(--vent-copy)",

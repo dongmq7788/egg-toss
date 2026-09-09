@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import IOSDevice from "./components/IOSDevice.jsx";
 import IntroScreen from "./screens/IntroScreen.jsx";
 import VentScreen from "./screens/VentScreen.jsx";
 import MeritScreen from "./screens/MeritScreen.jsx";
@@ -45,35 +44,32 @@ export default function App() {
     goto("intro", 0);
   }
 
-  const dark = false;
   const bg =
     screen === "intro" ? "var(--vent-ink)" :
     screen === "vent"  ? "var(--vent-ink)" :
                          "var(--merit-rice)";
 
   return (
-    <IOSDevice width={390} height={844} dark={dark}>
-      <div style={{ position: "relative", height: "100%", overflow: "hidden", background: bg }}>
-        <LanguageToggle />
-        {screen === "intro" && (
-          <IntroScreen
-            bank={bank}
-            onStart={() => goto("vent")}
-            onSkipToMerit={() => goto("merit", 0)}
-          />
-        )}
-        {screen === "vent" && (
-          <VentScreen onComplete={(hits) => goto("merit", hits)} />
-        )}
-        {screen === "merit" && (
-          <MeritScreen
-            sinsToOffset={sins}
-            startingMerit={bank}
-            onDone={finishMerit}
-          />
-        )}
-        {wiping && <div className="ink-wipe" />}
-      </div>
-    </IOSDevice>
+    <main className="app-shell" style={{ background: bg }}>
+      <LanguageToggle />
+      {screen === "intro" && (
+        <IntroScreen
+          bank={bank}
+          onStart={() => goto("vent")}
+          onSkipToMerit={() => goto("merit", 0)}
+        />
+      )}
+      {screen === "vent" && (
+        <VentScreen onComplete={(hits) => goto("merit", hits)} />
+      )}
+      {screen === "merit" && (
+        <MeritScreen
+          sinsToOffset={sins}
+          startingMerit={bank}
+          onDone={finishMerit}
+        />
+      )}
+      {wiping && <div className="ink-wipe" />}
+    </main>
   );
 }

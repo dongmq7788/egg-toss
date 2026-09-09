@@ -68,7 +68,7 @@ function ReligionPicker({ onPick, sinsToOffset, onDone }) {
       <div className="grain-layer" />
       <div style={{
         position: "relative", zIndex: 1, height: "100%",
-        display: "flex", flexDirection: "column", padding: "100px 20px 24px",
+        display: "flex", flexDirection: "column", padding: "76px 20px max(24px, env(safe-area-inset-bottom))",
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Bilingual zh="选择你的功德" en="choose your path" style={{ color: "var(--merit-wood-2)" }} />
@@ -637,7 +637,7 @@ function ModeHeader({ onBack, title, merit, onDone, accent }) {
   }
   return (
     <div style={{
-      padding: "100px 20px 8px",
+      padding: "76px 20px 8px",
       display: "flex", justifyContent: "space-between", alignItems: "center",
     }}>
       <button onClick={onBack} style={{

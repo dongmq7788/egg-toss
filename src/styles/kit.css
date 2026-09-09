@@ -1,10 +1,16 @@
 /* === Game UI kit shell === */
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: linear-gradient(145deg, #E8F8F3, #FFF5E6); min-height: 100vh; }
-body {
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px; font-family: var(--font-body);
+html, body, #root { margin: 0; padding: 0; width: 100%; min-height: 100%; }
+html { background: #EDF9F6; }
+body { min-height: 100dvh; font-family: var(--font-body); overflow: hidden; }
+.app-shell {
+  position: relative; width: 100%; height: 100dvh; min-height: 100dvh;
+  overflow: hidden; isolation: isolate;
 }
+
+/* The supplied logo is painted on white. Multiply lets that white inherit the
+   page colour while preserving the hand-drawn artwork. */
+.brand-logo { display: block; mix-blend-mode: multiply; }
 
 /* common in-game surfaces */
 .screen { position: absolute; inset: 0; overflow: hidden; }
@@ -46,11 +52,15 @@ body {
 }
 
 .language-toggle {
-  position: absolute; top: 54px; right: 16px; z-index: 200;
+  position: absolute; top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right)); z-index: 200;
   display: inline-flex; padding: 3px; gap: 2px;
   border: 1px solid rgba(73,112,101,.22); border-radius: 999px;
   background: rgba(255,255,255,.84); box-shadow: 0 6px 18px rgba(73,112,101,.12);
   backdrop-filter: blur(12px);
+}
+
+@media (min-width: 760px) {
+  .screen > div:not(.grain-layer) { max-width: 720px; margin-inline: auto; }
 }
 .language-toggle button {
   border: 0; border-radius: 999px; padding: 7px 10px; cursor: pointer;

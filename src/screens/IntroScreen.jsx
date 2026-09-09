@@ -16,14 +16,15 @@ export default function IntroScreen({ onStart, onSkipToMerit, bank = 0 }) {
       <div style={{
         position: "relative", zIndex: 1, height: "100%",
         display: "flex", flexDirection: "column",
-        padding: "62px 22px 28px", overflowY: "auto",
+        padding: "max(20px, env(safe-area-inset-top)) 22px max(24px, env(safe-area-inset-bottom))", overflowY: "auto",
       }}>
         {/* Logo lockup */}
         <div style={{ display: "flex", alignItems: "center", minHeight: 58 }}>
           <img
             src={logo}
             alt="Basta!"
-            style={{ width: 188, height: 74, objectFit: "contain", objectPosition: "left center", borderRadius: 10 }}
+            className="brand-logo"
+            style={{ width: 188, height: 74, objectFit: "contain", objectPosition: "left center" }}
           />
         </div>
 
