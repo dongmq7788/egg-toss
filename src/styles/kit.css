@@ -8,9 +8,7 @@ body { min-height: 100dvh; font-family: var(--font-body); overflow: hidden; }
   overflow: hidden; isolation: isolate;
 }
 
-/* The supplied logo is painted on white. Multiply lets that white inherit the
-   page colour while preserving the hand-drawn artwork. */
-.brand-logo { display: block; mix-blend-mode: multiply; }
+.brand-logo { display: block; }
 
 /* common in-game surfaces */
 .screen { position: absolute; inset: 0; overflow: hidden; }

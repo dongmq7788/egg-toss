@@ -1,6 +1,6 @@
 // IntroScreen — bilingual rules + start CTA. Sets the cathartic tone up-front.
 import { useLanguage } from "../i18n.jsx";
-import logo from "../assets/brand/logo.png";
+import logo from "../assets/brand/logo-transparent.png";
 
 const RULES = [
   { emoji: "👤", zh: "登记倒霉鬼", en: "Register the target", zhBody: "上传头像，列出他的罪状——老板、同事、前任、房东，随便谁。", enBody: "Upload a photo and list what they did—boss, coworker, ex, landlord, whoever." },

@@ -143,7 +143,10 @@ function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDo
 
   function tap() {
     const id = ++idRef.current;
-    if (window.GameAudio) window.GameAudio.fishTok();
+    if (window.GameAudio) {
+      window.GameAudio.unlock();
+      window.GameAudio.fishTok();
+    }
     setRipples((r) => [...r, { id }]);
     setFloats((f) => [...f, { id, x: 40 + Math.random() * 20 }]);
     setMerit((m) => m + 1);

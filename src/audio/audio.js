@@ -9,11 +9,26 @@
   const LEGACY_MUTE_KEY = "egg-toss-muted";
   let muted = JSON.parse(localStorage.getItem(MUTE_KEY) ?? localStorage.getItem(LEGACY_MUTE_KEY) ?? "false");
   let bgm = null;
+  let requestedMode = null;
 
   function ac() {
     if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === "suspended") ctx.resume();
+    if (ctx.state === "suspended") {
+      const resumed = ctx.resume();
+      if (resumed && resumed.catch) resumed.catch(() => {});
+    }
     return ctx;
+  }
+
+  // Mobile Safari only allows sound after a real user gesture. Unlock the
+  // shared AudioContext on the first interaction anywhere in the app.
+  function unlock() {
+    const audioContext = ac();
+    if (audioContext.state === "suspended") {
+      const resumed = audioContext.resume();
+      if (resumed && resumed.catch) resumed.catch(() => {});
+    }
+    return audioContext;
   }
   function gain(v, t = 0) {
     const a = ac(), g = a.createGain();
@@ -85,21 +100,36 @@
 
   // ─── BGM ───
   function stopBGM() {
-    if (!bgm) return;
+    requestedMode = null;
+    const active = bgm;
+    bgm = null;
+    if (!active) return;
+    if (!ctx || !active.master) {
+      active.cleanup && active.cleanup();
+      return;
+    }
     const t = ctx.currentTime;
-    bgm.master.gain.cancelScheduledValues(t);
-    bgm.master.gain.setValueAtTime(bgm.master.gain.value, t);
-    bgm.master.gain.linearRampToValueAtTime(0, t + 0.4);
-    setTimeout(() => { bgm && bgm.cleanup && bgm.cleanup(); bgm = null; }, 500);
+    active.master.gain.cancelScheduledValues(t);
+    active.master.gain.setValueAtTime(active.master.gain.value, t);
+    active.master.gain.linearRampToValueAtTime(0, t + 0.25);
+    setTimeout(() => active.cleanup && active.cleanup(), 300);
   }
   function startBGM(mode) {
-    stopBGM();
-    if (muted) { bgm = { mode, cleanup: () => {} }; return; }
+    if (bgm && bgm.mode === mode) {
+      requestedMode = mode;
+      unlock();
+      return;
+    }
+    const previous = bgm;
+    bgm = null;
+    if (previous && previous.cleanup) previous.cleanup();
+    requestedMode = mode;
+    if (muted) return;
     const a = ac();
     const master = a.createGain();
     master.gain.value = 0;
     master.connect(a.destination);
-    master.gain.linearRampToValueAtTime(0.55, a.currentTime + 1.2);
+    master.gain.linearRampToValueAtTime(0.68, a.currentTime + 0.7);
 
     const oscs = [];
     function drone(f, type = "sine", g = 0.08, detune = 0) {
@@ -117,14 +147,20 @@
 
     let timer = null;
     if (mode === "buddhist") {
-      // F + C drone, periodic bell, "om" formant via low triangle
-      drone(87.31, "sine", 0.10);          // F2
-      drone(130.81, "sine", 0.07);         // C3
-      drone(174.61, "triangle", 0.04);     // F3
-      timer = setInterval(() => {
+      // Warm drone plus a clearly audible, original pentatonic meditation loop.
+      drone(87.31, "sine", 0.16);          // F2
+      drone(130.81, "sine", 0.11);         // C3
+      drone(174.61, "triangle", 0.06);     // F3
+      const notes = [349.23, 392.0, 440.0, 523.25, 440.0, 392.0];
+      let noteIndex = 0;
+      const playNote = () => {
         if (muted || !bgm) return;
-        [659, 988].forEach((f, i) => tone({ f, type: "sine", g: 0.1, attack: 0.005, decay: 2.2, dest: master }));
-      }, 4500);
+        const f = notes[noteIndex++ % notes.length];
+        tone({ f, type: "sine", g: 0.18, attack: 0.04, decay: 1.7, dest: master });
+        tone({ f: f * 2, type: "sine", g: 0.045, attack: 0.04, decay: 1.25, dest: master });
+      };
+      playNote();
+      timer = setInterval(playNote, 2200);
     } else if (mode === "christian") {
       // organ-ish stacked sine: C major triad pad + slow breathy
       drone(130.81, "sawtooth", 0.05);      // C3
@@ -158,11 +194,12 @@
     };
   }
   function bgmPause() {
-    if (!bgm) return;
+    if (!bgm || !bgm.master || !ctx) return;
     bgm.master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
   }
   function bgmResume() {
-    if (!bgm) return;
+    if (!bgm || !bgm.master || !ctx) return;
+    unlock();
     bgm.master.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.4);
   }
 
@@ -171,11 +208,16 @@
     localStorage.setItem(MUTE_KEY, JSON.stringify(muted));
     if (muted && bgm) bgmPause();
     else if (!muted && bgm) bgmResume();
+    else if (!muted && requestedMode) startBGM(requestedMode);
   }
 
   window.GameAudio = {
     fishTok, slap, splat, bell,
-    startBGM, stopBGM, bgmPause, bgmResume,
-    setMuted, isMuted: () => muted, currentMode: () => bgm && bgm.mode,
+    startBGM, stopBGM, bgmPause, bgmResume, unlock,
+    setMuted, isMuted: () => muted, currentMode: () => requestedMode,
   };
+
+  window.addEventListener("pointerdown", unlock, { capture: true, once: true });
+  window.addEventListener("touchstart", unlock, { capture: true, once: true, passive: true });
+  window.addEventListener("keydown", unlock, { capture: true, once: true });
 })();
