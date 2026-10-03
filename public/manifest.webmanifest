@@ -1,0 +1,23 @@
+{
+  "name": "Basta!",
+  "short_name": "Basta!",
+  "description": "把火气扔出去，再把功德赚回来。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#EDF9F6",
+  "theme_color": "#EDF9F6",
+  "icons": [
+    {
+      "src": "/basta-app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/basta-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
