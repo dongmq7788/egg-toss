@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import IntroScreen from "./screens/IntroScreen.jsx";
-import VentScreen from "./screens/VentScreen.jsx";
-import MeritScreen from "./screens/MeritScreen.jsx";
 import { LanguageToggle } from "./i18n.jsx";
+
+const loadVentScreen = () => import("./screens/VentScreen.jsx");
+const loadMeritScreen = () => import("./screens/MeritScreen.jsx");
+const VentScreen = lazy(loadVentScreen);
+const MeritScreen = lazy(loadMeritScreen);
 
 // App — Intro -> (Vent or skip) -> Merit, with ink-wipe transitions.
 // Merit accumulates across sessions in localStorage so "today's merit" can
@@ -26,6 +29,19 @@ export default function App() {
     localStorage.setItem(BANK_KEY, String(bank));
   }, [bank]);
 
+  useEffect(() => {
+    const warmNextScreens = () => {
+      loadVentScreen();
+      loadMeritScreen();
+    };
+    const idleId = window.requestIdleCallback
+      ? window.requestIdleCallback(warmNextScreens, { timeout: 1500 })
+      : window.setTimeout(warmNextScreens, 700);
+    return () => window.requestIdleCallback
+      ? window.cancelIdleCallback(idleId)
+      : window.clearTimeout(idleId);
+  }, []);
+
   function goto(target, sinCount) {
     setWiping(true);
     setTimeout(() => {
@@ -35,8 +51,12 @@ export default function App() {
     }, 360);
   }
 
+  function gotoMerit(sinCount = 0) {
+    window.GameAudio && window.GameAudio.startBGM("buddhist");
+    goto("merit", sinCount);
+  }
+
   // MeritScreen reports its final merit total (= startingBank + earned this session).
-  // Skip paths (e.g. ReligionPicker "跳过") forward the React event instead — leave the bank alone.
   function finishMerit(finalMerit) {
     if (typeof finalMerit === "number") {
       setBank(Math.max(0, finalMerit - sins));
@@ -56,19 +76,21 @@ export default function App() {
         <IntroScreen
           bank={bank}
           onStart={() => goto("vent")}
-          onSkipToMerit={() => goto("merit", 0)}
+          onSkipToMerit={() => gotoMerit(0)}
         />
       )}
-      {screen === "vent" && (
-        <VentScreen onComplete={(hits) => goto("merit", hits)} />
-      )}
-      {screen === "merit" && (
-        <MeritScreen
-          sinsToOffset={sins}
-          startingMerit={bank}
-          onDone={finishMerit}
-        />
-      )}
+      <Suspense fallback={null}>
+        {screen === "vent" && (
+          <VentScreen onBack={() => goto("intro")} onComplete={(hits) => gotoMerit(hits)} />
+        )}
+        {screen === "merit" && (
+          <MeritScreen
+            sinsToOffset={sins}
+            startingMerit={bank}
+            onDone={finishMerit}
+          />
+        )}
+      </Suspense>
       {wiping && <div className="ink-wipe" />}
     </main>
   );

@@ -24,7 +24,7 @@ const DEFAULT_CRIMES = {
   en: "Demanded weekend overtime\nMade promises and never delivered\nKept guilt-tripping the team",
 };
 
-export default function VentScreen({ onComplete }) {
+export default function VentScreen({ onBack, onComplete }) {
   const { lang, t } = useLanguage();
   const [phase, setPhase] = useState("setup");
   const [name, setName] = useState(() => DEFAULT_NAMES[lang]);
@@ -133,6 +133,18 @@ export default function VentScreen({ onComplete }) {
           display: "flex", flexDirection: "column",
           padding: "76px 20px max(24px, env(safe-area-inset-bottom))", overflowY: "auto",
         }}>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label={t("返回首页", "Return home")}
+            style={{
+              position: "absolute", top: "max(16px, env(safe-area-inset-top))", left: 20,
+              minHeight: 38, padding: "8px 14px", borderRadius: 999, cursor: "pointer",
+              background: "rgba(255,255,255,.9)", border: "1px solid rgba(99,151,134,.28)",
+              boxShadow: "0 6px 18px rgba(73,112,101,.12)", color: "var(--vent-copy)",
+              font: "700 14px/1 var(--font-body)", backdropFilter: "blur(12px)",
+            }}
+          >← {t("首页", "Home")}</button>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <Bilingual zh="登记倒霉鬼" en="register the target" />
             <Stamp zh={t("发泄", "VENT")} rotate={-8} />

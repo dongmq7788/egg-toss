@@ -3,7 +3,7 @@ Add-Type -AssemblyName System.Drawing
 $sourcePath = Join-Path $PSScriptRoot '..\src\assets\brand\logo.png'
 $outputPath = Join-Path $PSScriptRoot '..\src\assets\brand\logo-transparent.png'
 $source = [System.Drawing.Bitmap]::FromFile($sourcePath)
-$width = 1000
+$width = 500
 $height = [Math]::Round($source.Height * $width / $source.Width)
 $resized = New-Object System.Drawing.Bitmap($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $graphics = [System.Drawing.Graphics]::FromImage($resized)

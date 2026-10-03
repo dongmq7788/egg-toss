@@ -7,6 +7,7 @@
   let ctx = null;
   const MUTE_KEY = "basta-muted";
   const LEGACY_MUTE_KEY = "egg-toss-muted";
+  const HEART_SUTRA_URL = "/audio/heart-sutra.mp3";
   let muted = JSON.parse(localStorage.getItem(MUTE_KEY) ?? localStorage.getItem(LEGACY_MUTE_KEY) ?? "false");
   let bgm = null;
   let requestedMode = null;
@@ -117,7 +118,12 @@
   function startBGM(mode) {
     if (bgm && bgm.mode === mode) {
       requestedMode = mode;
-      unlock();
+      if (bgm.media) {
+        const playing = bgm.media.play();
+        if (playing && playing.catch) playing.catch(() => {});
+      } else {
+        unlock();
+      }
       return;
     }
     const previous = bgm;
@@ -125,6 +131,27 @@
     if (previous && previous.cleanup) previous.cleanup();
     requestedMode = mode;
     if (muted) return;
+
+    if (mode === "buddhist") {
+      const media = new Audio(HEART_SUTRA_URL);
+      media.preload = "auto";
+      media.loop = true;
+      media.volume = 0.82;
+      media.setAttribute("playsinline", "");
+      bgm = {
+        mode, media,
+        cleanup: () => {
+          media.pause();
+          media.currentTime = 0;
+          media.removeAttribute("src");
+          media.load();
+        },
+      };
+      const playing = media.play();
+      if (playing && playing.catch) playing.catch(() => {});
+      return;
+    }
+
     const a = ac();
     const master = a.createGain();
     master.gain.value = 0;
@@ -194,11 +221,22 @@
     };
   }
   function bgmPause() {
-    if (!bgm || !bgm.master || !ctx) return;
+    if (!bgm) return;
+    if (bgm.media) {
+      bgm.media.pause();
+      return;
+    }
+    if (!bgm.master || !ctx) return;
     bgm.master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
   }
   function bgmResume() {
-    if (!bgm || !bgm.master || !ctx) return;
+    if (!bgm) return;
+    if (bgm.media) {
+      const playing = bgm.media.play();
+      if (playing && playing.catch) playing.catch(() => {});
+      return;
+    }
+    if (!bgm.master || !ctx) return;
     unlock();
     bgm.master.gain.linearRampToValueAtTime(0.55, ctx.currentTime + 0.4);
   }

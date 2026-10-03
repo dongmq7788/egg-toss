@@ -40,24 +40,20 @@ const DUAS = [
 
 // ─── Top-level dispatcher ─────────────────────────────────────
 export default function MeritScreen({ sinsToOffset = 0, startingMerit = 0, onDone }) {
-  const [chosen, setChosen] = useState(null);
-  // Start from the persisted bank — earning is additive on top of what's saved.
   const [merit, setMerit] = useState(startingMerit);
-
-  if (!chosen) {
-    return <ReligionPicker onPick={setChosen} sinsToOffset={sinsToOffset} onDone={onDone} />;
-  }
-
   const offsetCount = Math.min(merit, sinsToOffset);
-  const sharedProps = {
-    merit, setMerit, offsetCount, sinsToOffset,
-    onBack: () => setChosen(null),
-    onDone: () => onDone && onDone(merit),
-  };
-  if (chosen === "buddhist")  return <BuddhistMode {...sharedProps} />;
-  if (chosen === "christian") return <ChristianMode {...sharedProps} />;
-  if (chosen === "muslim")    return <MuslimMode {...sharedProps} />;
-  return null;
+  const finish = () => onDone && onDone(merit);
+
+  return (
+    <BuddhistMode
+      merit={merit}
+      setMerit={setMerit}
+      offsetCount={offsetCount}
+      sinsToOffset={sinsToOffset}
+      onBack={finish}
+      onDone={finish}
+    />
+  );
 }
 
 // ─── Religion picker ──────────────────────────────────────────
@@ -129,8 +125,6 @@ function ReligionPicker({ onPick, sinsToOffset, onDone }) {
 // ─── Buddhist mode (wooden fish) ──────────────────────────────
 function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDone }) {
   const { t } = useLanguage();
-  const [sutra, setSutra] = useState(SUTRAS[0]);
-  const [picking, setPicking] = useState(false);
   const [ripples, setRipples] = useState([]);
   const [floats, setFloats] = useState([]);
   const fishRef = useRef(null);
@@ -144,7 +138,7 @@ function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDo
   function tap() {
     const id = ++idRef.current;
     if (window.GameAudio) {
-      window.GameAudio.unlock();
+      window.GameAudio.startBGM("buddhist");
       window.GameAudio.fishTok();
     }
     setRipples((r) => [...r, { id }]);
@@ -169,34 +163,6 @@ function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDo
         <ModeHeader onBack={onBack} title={t("佛教 · 木鱼", "Buddhist · Wooden Fish")} merit={merit} onDone={onDone} accent="var(--merit-wood-2)" />
         {sinsToOffset > 0 && <OffsetBar offset={offsetCount} total={sinsToOffset} />}
 
-        {/* Sutra strip */}
-        <div style={{ padding: "16px 20px 8px" }}>
-          <button
-            onClick={() => setPicking(true)}
-            style={{
-              width: "100%", textAlign: "left",
-              border: "1.5px solid var(--merit-wood)",
-              background: "rgba(139,94,60,.06)", borderRadius: 16, padding: "10px 14px",
-              display: "flex", alignItems: "center", gap: 12, cursor: "pointer",
-            }}
-          >
-            <div style={{
-              width: 36, height: 36, borderRadius: "50%",
-              background: "var(--merit-wood)", color: "var(--merit-rice)",
-              display: "grid", placeItems: "center", font: "400 18px var(--font-brush)",
-            }}>♪</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ font: "400 18px var(--font-brush)", color: "var(--merit-wood-2)", lineHeight: 1 }}>
-                {t(`《${sutra.zh}》`, sutra.en)}
-              </div>
-            </div>
-            <span style={{ font: "600 12px var(--font-body)", color: "var(--merit-wood-2)" }}>{t("换一卷 ›", "Change ›")}</span>
-          </button>
-          <p className="t-sutra" style={{
-            color: "var(--ink-80)", fontSize: 13, opacity: .85, marginTop: 8, textAlign: "center",
-          }}>{t(sutra.zhExcerpt, sutra.enExcerpt)}</p>
-        </div>
-
         <div style={{
           flex: 1, display: "flex", justifyContent: "center", alignItems: "center", position: "relative",
         }}>
@@ -220,13 +186,6 @@ function BuddhistMode({ merit, setMerit, offsetCount, sinsToOffset, onBack, onDo
           </Button>
         </div>
       </div>
-      {picking && (
-        <SutraPickerSheet
-          value={sutra}
-          onPick={(s) => { setSutra(s); setPicking(false); }}
-          onClose={() => setPicking(false)}
-        />
-      )}
     </div>
   );
 }
@@ -646,7 +605,7 @@ function ModeHeader({ onBack, title, merit, onDone, accent }) {
       <button onClick={onBack} style={{
         background: "transparent", border: 0, color: accent,
         font: "600 13px var(--font-body)", cursor: "pointer",
-      }}>← {t("换一个", "Change")}</button>
+      }}>← {t("首页", "Home")}</button>
       <div style={{ textAlign: "center", lineHeight: 1.1 }}>
         <div style={{ font: "700 15px var(--font-body)", color: accent }}>{title}</div>
         <div className="t-num" style={{ color: accent, fontSize: 22, marginTop: 2 }}>

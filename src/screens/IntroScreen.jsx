@@ -103,6 +103,11 @@ export default function IntroScreen({ onStart, onSkipToMerit, bank = 0 }) {
             src={logo}
             alt="Basta!"
             className="brand-logo"
+            width="500"
+            height="198"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             style={{ width: 188, height: 74, objectFit: "contain", objectPosition: "left center" }}
           />
         </div>
